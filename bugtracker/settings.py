@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "channels",
     "corsheaders",
     "drf_spectacular",
+    "'django_filters'"
     # Local apps
     "core",
     "tracker",
