@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Q
+from django.views.generic import TemplateView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -34,7 +35,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         username = request.data.get("username")
 
         try:
-            from django.contrib.auth.models import User
+            from core.models import User
 
             user = User.objects.get(username=username)
             project.members.add(user)
@@ -50,7 +51,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         username = request.data.get("username")
 
         try:
-            from django.contrib.auth.models import User
+            from core.models import User
 
             user = User.objects.get(username=username)
             project.members.remove(user)
@@ -107,7 +108,6 @@ class BugViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def my_bugs(self, request):
-        """Get bugs assigned to the current user"""
         bugs = self.get_queryset().filter(assigned_to=request.user)
         serializer = self.get_serializer(bugs, many=True)
         return Response(serializer.data)
@@ -204,3 +204,12 @@ class ActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
         return ActivityLog.objects.filter(
             Q(project__owner=user) | Q(project__members=user)
         ).distinct()
+
+
+class ProjectsView(TemplateView):
+    template_name = "tracker/projects.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Projects Dashboard"
+        return context

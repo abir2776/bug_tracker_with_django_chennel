@@ -10,5 +10,6 @@ router.register(r"comments", tracker.CommentViewSet, basename="comment")
 router.register(r"activities", tracker.ActivityLogViewSet, basename="activity")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("projects_list", tracker.ProjectsView.as_view(), name="projects-list"),
+    path("api/", include(router.urls)),
 ]

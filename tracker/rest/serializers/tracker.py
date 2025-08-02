@@ -1,5 +1,6 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
+
+from core.models import User
 
 from ...models import ActivityLog, Bug, Comment, Project
 
@@ -7,13 +8,13 @@ from ...models import ActivityLog, Bug, Comment, Project
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name"]
+        fields = ["id", "email", "first_name", "last_name"]
 
 
 class ProjectSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
-    members = UserSerializer(many=True, read_only=True)
     bug_count = serializers.SerializerMethodField()
+    member_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -22,8 +23,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "owner",
-            "members",
             "bug_count",
+            "member_count",
             "created_at",
             "updated_at",
         ]
@@ -31,6 +32,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_bug_count(self, obj):
         return obj.bugs.count()
+
+    def get_member_count(self, obj):
+        return obj.members.count()
 
     def create(self, validated_data):
         validated_data["owner"] = self.context["request"].user

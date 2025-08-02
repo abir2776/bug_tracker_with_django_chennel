@@ -19,7 +19,6 @@ class PublicUserRegistrationSerializer(serializers.Serializer):
         fields = (
             "email",
             "password",
-            "phone",
             "first_name",
             "last_name",
         )
