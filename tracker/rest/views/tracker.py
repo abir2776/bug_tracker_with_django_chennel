@@ -34,7 +34,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         username = request.data.get("username")
 
         try:
-            from django.contrib.auth.models import User
+            from core.models import User
 
             user = User.objects.get(username=username)
             project.members.add(user)
@@ -50,7 +50,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         username = request.data.get("username")
 
         try:
-            from django.contrib.auth.models import User
+            from core.models import User
 
             user = User.objects.get(username=username)
             project.members.remove(user)
