@@ -1,11 +1,15 @@
 import asyncio
 import json
+import os
 
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from dotenv import load_dotenv
 
 from bugtracker.asgi import application
+
+load_dotenv()
 
 User = get_user_model()
 
@@ -60,7 +64,8 @@ class Command(BaseCommand):
     async def get_test_user():
         user, _ = await asyncio.to_thread(
             lambda: User.objects.get_or_create(
-                email="abir@gmail.com", defaults={"password": "12345678"}
+                email=os.getenv("WEBSOCKET_TEST_USER_EMAIL"),
+                defaults={"password": os.getenv("WEBSOCKET_TEST_USER_PASS")},
             )
         )
         return user
